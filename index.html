@@ -43,7 +43,7 @@
       justify-content: center;
       align-items: center;
       padding: 16px;
-      color: #f8fafc;
+      color: #ffffff;
     }
 
     .container {
@@ -99,7 +99,7 @@
       cursor: grabbing;
     }
 
-    /* Luminous Selection Indicator with Brand Colors */
+    /* Selection Indicator */
     .wheel-selection-indicator {
       position: absolute;
       top: calc(50% - (var(--item-height) / 2));
@@ -107,14 +107,14 @@
       right: 10px;
       height: var(--item-height);
       background: linear-gradient(90deg, rgba(12, 35, 66, 0.4) 0%, rgba(24, 66, 117, 0.5) 50%, rgba(12, 35, 66, 0.4) 100%);
-      border: 2px solid rgba(56, 189, 248, 0.6);
+      border: 2px solid rgba(56, 189, 248, 0.7);
       border-radius: 18px;
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.3), inset 0 0 16px rgba(24, 66, 117, 0.5);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35), inset 0 0 16px rgba(24, 66, 117, 0.5);
       pointer-events: none;
-      z-index: 2;
+      z-index: 1;
     }
 
-    /* Dark Overlays / Depth Gradients */
+    /* Soft top/bottom fade gradients behind text */
     .wheel-overlay-top,
     .wheel-overlay-bottom {
       position: absolute;
@@ -122,19 +122,20 @@
       right: 0;
       height: calc(50% - (var(--item-height) / 2));
       pointer-events: none;
-      z-index: 3;
+      z-index: 2;
     }
 
     .wheel-overlay-top {
       top: 0;
-      background: linear-gradient(to bottom, rgba(4, 9, 19, 0.98) 15%, rgba(4, 9, 19, 0.5) 80%, transparent 100%);
+      background: linear-gradient(to bottom, rgba(4, 9, 19, 0.92) 0%, rgba(4, 9, 19, 0.3) 70%, transparent 100%);
     }
 
     .wheel-overlay-bottom {
       bottom: 0;
-      background: linear-gradient(to top, rgba(4, 9, 19, 0.98) 15%, rgba(4, 9, 19, 0.5) 80%, transparent 100%);
+      background: linear-gradient(to top, rgba(4, 9, 19, 0.92) 0%, rgba(4, 9, 19, 0.3) 70%, transparent 100%);
     }
 
+    /* Wheel Scroller in Front */
     .wheel-scroller {
       position: absolute;
       width: 100%;
@@ -143,9 +144,10 @@
       left: 0;
       transform-style: preserve-3d;
       will-change: transform;
+      z-index: 5;
     }
 
-    /* Wheel Items */
+    /* Pure Sharp White Wheel Items */
     .wheel-item {
       position: absolute;
       left: 0;
@@ -157,14 +159,15 @@
       justify-content: space-between;
       padding: 0 24px;
       font-size: 1.35rem;
-      font-weight: 500;
-      color: #64748b;
+      font-weight: 600;
+      color: #ffffff !important;
       backface-visibility: hidden;
-      transition: color 0.15s ease, text-shadow 0.15s ease;
+      transition: font-size 0.15s ease, font-weight 0.15s ease;
       direction: rtl;
     }
 
     .wheel-item-title {
+      color: #ffffff !important;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -182,40 +185,38 @@
       transition: all 0.2s ease;
     }
 
-    /* White body color tag */
     .wheel-item-badge.badge-white {
-      background: #f8fafc;
+      background: #ffffff;
       color: #09090b;
       border: 1px solid #ffffff;
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
     }
 
-    /* Black body color tag */
     .wheel-item-badge.badge-black {
       background: #0b1523;
-      color: #94a3b8;
-      border: 1px solid #1e293b;
+      color: #ffffff;
+      border: 1px solid rgba(56, 189, 248, 0.4);
     }
 
-    /* Active Selected Item */
+    /* Active Selected Item (Brilliant Sharp White) */
     .wheel-item.selected {
-      color: #ffffff;
+      color: #ffffff !important;
       font-weight: 900;
       font-size: 1.55rem;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.45);
+      /* text-shadow: 0 0 10px #ffffff, 0 0 20px rgba(56, 189, 248, 0.8); */
     }
 
     .wheel-item.selected .wheel-item-badge.badge-white {
-      box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
-      transform: scale(1.05);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.9);
+      transform: scale(1.08);
     }
 
     .wheel-item.selected .wheel-item-badge.badge-black {
-      border-color: rgba(56, 189, 248, 0.7);
-      color: #f8fafc;
+      border-color: rgba(56, 189, 248, 0.9);
+      color: #ffffff;
       background: #0f2544;
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
-      transform: scale(1.05);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.6);
+      transform: scale(1.08);
     }
 
     /* Bottom Typo Logo */
@@ -240,12 +241,10 @@
 <body>
 
   <main class="container">
-    <!-- Top Logo -->
     <div class="top-logo-wrap">
       <img src="logo-icon.png" alt="Pars Shoa Icon" class="top-logo">
     </div>
 
-    <!-- Center Huge Wheel -->
     <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox" aria-label="فهرست محصولات">
       <div class="wheel-overlay-top"></div>
       <div class="wheel-selection-indicator"></div>
@@ -253,7 +252,6 @@
       <div class="wheel-scroller" id="wheelScroller"></div>
     </div>
 
-    <!-- Bottom Typo Logo -->
     <div class="bottom-logo-wrap">
       <img src="pst-typo.png" alt="Pars Shoa Typography" class="bottom-logo">
     </div>
@@ -280,7 +278,6 @@
     const scroller = document.getElementById('wheelScroller');
     const picker = document.getElementById('wheelPicker');
 
-    // Build wheel items
     products.forEach((prod, index) => {
       const item = document.createElement('div');
       item.className = `wheel-item ${index === 0 ? 'selected' : ''}`;
@@ -311,7 +308,8 @@
 
         const normalizedAngle = Math.abs((itemRotation % 360 + 360) % 360);
         const distance = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
-        const opacity = Math.max(0.06, 1 - (distance / 65));
+        
+        const opacity = Math.max(0.35, 1 - (distance / 80));
 
         item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${itemRotation}deg)`;
         item.style.opacity = opacity;
@@ -410,14 +408,12 @@
       setSelectedIndex(targetIndex, true);
     }
 
-    // Click item selection
     items.forEach((item) => {
       item.addEventListener('click', () => {
         setSelectedIndex(parseInt(item.dataset.index, 10), true);
       });
     });
 
-    // Mouse wheel scroll
     picker.addEventListener('wheel', (e) => {
       e.preventDefault();
       setSelectedIndex(currentIndex + (e.deltaY > 0 ? 1 : -1), true);
@@ -431,7 +427,6 @@
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
-    // Initial positioning
     setSelectedIndex(0, false);
   </script>
 </body>
