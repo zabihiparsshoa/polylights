@@ -23,10 +23,9 @@
       --card-border: rgba(255, 255, 255, 0.25);
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --item-height: 46px;
+      --item-height: 50px; /* کمی افزایش ارتفاع برای سایز جدید فونت */
     }
 
-    /* ریست */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -67,24 +66,11 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .header {
-      text-align: center;
-    }
+    .header { text-align: center; }
+    .header h1 { font-size: 1.55rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+    .header p { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
 
-    .header h1 {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-
-    .header p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    /* گردونه سه‌بعدی iOS */
+    /* گردونه سه‌بعدی */
     .wheel-picker-wrapper {
       position: relative;
       width: 100%;
@@ -100,16 +86,10 @@
       cursor: grab;
     }
 
-    .wheel-picker-wrapper:active {
-      cursor: grabbing;
-    }
-
     .wheel-selection-indicator {
       position: absolute;
       top: calc(50% - (var(--item-height) / 2));
-      left: 10px;
-      right: 10px;
-      height: var(--item-height);
+      left: 10px; right: 10px; height: var(--item-height);
       background: rgba(99, 102, 241, 0.12);
       border: 2px solid rgba(99, 102, 241, 0.4);
       border-radius: 12px;
@@ -117,218 +97,73 @@
       z-index: 2;
     }
 
-    .wheel-overlay-top,
-    .wheel-overlay-bottom {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: calc(50% - (var(--item-height) / 2));
-      pointer-events: none;
-      z-index: 3;
+    .wheel-overlay-top, .wheel-overlay-bottom {
+      position: absolute; left: 0; right: 0; height: calc(50% - (var(--item-height) / 2));
+      pointer-events: none; z-index: 3;
     }
+    .wheel-overlay-top { top: 0; background: linear-gradient(to bottom, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%); }
+    .wheel-overlay-bottom { bottom: 0; background: linear-gradient(to top, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%); }
 
-    .wheel-overlay-top {
-      top: 0;
-      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%);
-    }
+    .wheel-scroller { position: absolute; width: 100%; height: 100%; top: 0; left: 0; transform-style: preserve-3d; will-change: transform; }
 
-    .wheel-overlay-bottom {
-      bottom: 0;
-      background: linear-gradient(to top, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%);
-    }
-
-    .wheel-scroller {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
-
+    /* تغییرات در wheel-item: راست‌چین و بزرگتر */
     .wheel-item {
       position: absolute;
-      left: 0;
-      width: 100%;
-      height: var(--item-height);
+      left: 0; width: 100%; height: var(--item-height);
       top: calc(50% - (var(--item-height) / 2));
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.05rem;
+      justify-content: flex-start; /* راست‌چین کردن */
+      padding-right: 25px;         /* فاصله از لبه راست */
+      font-size: 1.25rem;          /* سایز بزرگتر */
       font-weight: 500;
       color: #64748b;
       backface-visibility: hidden;
       transition: color 0.15s ease;
-      padding: 0 12px;
-      text-align: center;
+      text-align: right;
     }
 
     .wheel-item.selected {
       color: #4338ca;
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.4rem;           /* سایز بزرگتر برای انتخاب */
     }
 
-    /* بخش ویژگی‌های ظریف و ریز زیر اسکرول بار */
-    .specs-panel {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      background: #f1f5f9;
-      padding: 10px;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
-    }
+    .specs-panel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: #f1f5f9; padding: 10px; border-radius: 14px; border: 1px solid #e2e8f0; }
+    .spec-badge { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #334155; background: #ffffff; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(226, 232, 240, 0.8); }
+    .spec-badge.full-width { grid-column: span 2; justify-content: center; background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
+    
+    .result-card { width: 100%; background: #ffffff; border-radius: 14px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
+    .result-label { font-size: 0.88rem; color: var(--text-muted); font-weight: 500; }
+    .result-value { font-size: 0.95rem; font-weight: 700; color: #1e1b4b; background: #e0e7ff; padding: 4px 12px; border-radius: 999px; border: 1px solid #c7d2fe; max-width: 60%; text-align: center; }
 
-    .spec-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #334155;
-      background: #ffffff;
-      padding: 6px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-    }
-
-    .spec-badge.full-width {
-      grid-column: span 2;
-      justify-content: center;
-      background: #eef2ff;
-      color: #3730a3;
-      border-color: #c7d2fe;
-    }
-
-    .spec-icon {
-      font-size: 0.9rem;
-      line-height: 1;
-    }
-
-    /* نمایش محصول انتخاب شده */
-    .result-card {
-      width: 100%;
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid #e2e8f0;
-    }
-
-    .result-label {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .result-value {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #1e1b4b;
-      background: #e0e7ff;
-      padding: 4px 12px;
-      border-radius: 999px;
-      border: 1px solid #c7d2fe;
-      max-width: 60%;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .confirm-btn {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-      color: white;
-      border: none;
-      border-radius: 14px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 6px 14px -3px rgba(79, 70, 229, 0.4);
-      transition: all 0.2s ease;
-    }
-
-    .confirm-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 18px -4px rgba(79, 70, 229, 0.5);
-    }
-
-    .confirm-btn:active {
-      transform: translateY(1px);
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      background: #0f172a;
-      color: #fff;
-      padding: 12px 22px;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .confirm-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; }
+    .toast { position: fixed; bottom: 24px; background: #0f172a; color: #fff; padding: 12px 22px; border-radius: 999px; opacity: 0; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 100; }
+    .toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
-
   <main class="container">
     <header class="header">
       <h1>انتخاب چراغ پلی لایت</h1>
       <p>برای انتخاب مدل، گردونه را بچرخانید</p>
     </header>
 
-    <!-- ویل پیکر -->
-    <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox" aria-label="فهرست محصولات پلی لایت">
+    <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox">
       <div class="wheel-overlay-top"></div>
       <div class="wheel-selection-indicator"></div>
       <div class="wheel-overlay-bottom"></div>
       <div class="wheel-scroller" id="wheelScroller"></div>
     </div>
 
-    <!-- مشخصات و ویژگی‌های ریز زیر گردونه -->
-    <section class="specs-panel" aria-label="مشخصات کلی محصول">
-      <div class="spec-badge">
-        <span class="spec-icon">✨</span>
-        <span>بدون فلیکر (بدون سوسو)</span>
-      </div>
-      <div class="spec-badge">
-        <span class="spec-icon">🛡️</span>
-        <span>جنس بدنه: ABS مقاوم</span>
-      </div>
-      <div class="spec-badge">
-        <span class="spec-icon">🔧</span>
-        <span>قابلیت نصب: روکار</span>
-      </div>
-      <div class="spec-badge">
-        <span class="spec-icon">📜</span>
-        <span>۱۸ ماه گارانتی تعویض</span>
-      </div>
-      <div class="spec-badge full-width">
-        <span class="spec-icon">🌧️</span>
-        <span>دارای حفاظت استاندارد محیطی IP64</span>
-      </div>
+    <section class="specs-panel">
+      <div class="spec-badge">✨ بدون فلیکر</div>
+      <div class="spec-badge">🛡️ بدنه: ABS مقاوم</div>
+      <div class="spec-badge">🔧 نصب: روکار</div>
+      <div class="spec-badge">📜 ۱۸ ماه گارانتی</div>
+      <div class="spec-badge full-width">🌧️ حفاظت محیطی IP64</div>
     </section>
 
-    <!-- کادر نمایش انتخاب فعلی -->
     <div class="result-card">
       <span class="result-label">محصول انتخابی:</span>
       <span class="result-value" id="selectedProductDisplay">---</span>
@@ -340,17 +175,16 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // لیست دقیق ۹ آپشن مشخص شده
     const products = [
-      { id: 1, name: "چراغ پلی لایت خطی ۴ وات (بدنه مشکی)" },
-      { id: 2, name: "چراغ پلی لایت خطی ۶ وات (بدنه مشکی)" },
-      { id: 3, name: "چراغ پلی لایت خطی ۸ وات (بدنه مشکی)" },
-      { id: 4, name: "چراغ پلی لایت ۴ وات (بدنه سفید)" },
-      { id: 5, name: "چراغ پلی لایت ۴ وات (بدنه مشکی)" },
-      { id: 6, name: "چراغ پلی لایت ۶ وات (بدنه سفید)" },
-      { id: 7, name: "چراغ پلی لایت ۶ وات (بدنه مشکی)" },
-      { id: 8, name: "چراغ پلی لایت ۸ وات (بدنه سفید)" },
-      { id: 9, name: "چراغ پلی لایت ۸ وات (بدنه مشکی)" }
+      { name: "چراغ پلی لایت خطی ۴ وات (مشکی)" },
+      { name: "چراغ پلی لایت خطی ۶ وات (مشکی)" },
+      { name: "چراغ پلی لایت خطی ۸ وات (مشکی)" },
+      { name: "چراغ پلی لایت ۴ وات (سفید)" },
+      { name: "چراغ پلی لایت ۴ وات (مشکی)" },
+      { name: "چراغ پلی لایت ۶ وات (سفید)" },
+      { name: "چراغ پلی لایت ۶ وات (مشکی)" },
+      { name: "چراغ پلی لایت ۸ وات (سفید)" },
+      { name: "چراغ پلی لایت ۸ وات (مشکی)" }
     ];
 
     const itemAngle = 24;
@@ -363,7 +197,6 @@
     const toast = document.getElementById('toast');
     const picker = document.getElementById('wheelPicker');
 
-    // رندر آیتم‌ها
     products.forEach((prod, index) => {
       const item = document.createElement('div');
       item.className = `wheel-item ${index === 0 ? 'selected' : ''}`;
@@ -374,174 +207,74 @@
 
     const items = scroller.querySelectorAll('.wheel-item');
 
-    // محاسبه و اعمال موقعیت ۳ بعدی المان‌ها
     function updateWheel(rotationDeg) {
       items.forEach((item, index) => {
         const itemRotation = (index * itemAngle) + rotationDeg;
         const rad = (itemRotation * Math.PI) / 180;
-        
         const translateY = -Math.sin(rad) * radius;
         const translateZ = Math.cos(rad) * radius - radius;
-        const rotateX = itemRotation;
-
+        
         const normalizedAngle = Math.abs((itemRotation % 360 + 360) % 360);
         const distance = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
         const opacity = Math.max(0.12, 1 - (distance / 75));
 
-        item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg)`;
+        item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${itemRotation}deg)`;
         item.style.opacity = opacity;
 
-        if (Math.abs(itemRotation) < itemAngle / 2) {
-          item.classList.add('selected');
-        } else {
-          item.classList.remove('selected');
-        }
+        if (Math.abs(itemRotation) < itemAngle / 2) item.classList.add('selected');
+        else item.classList.remove('selected');
       });
     }
 
-    // هدایت به یک آیتم مشخص
     function setSelectedIndex(index, animate = true) {
       index = Math.max(0, Math.min(products.length - 1, index));
       currentIndex = index;
       const targetRotation = -index * itemAngle;
-
-      if (animate) {
-        animateTo(targetRotation);
-      } else {
-        currentRotation = targetRotation;
-        updateWheel(currentRotation);
-        display.textContent = products[currentIndex].name;
-      }
+      if (animate) animateTo(targetRotation);
+      else { currentRotation = targetRotation; updateWheel(currentRotation); display.textContent = products[currentIndex].name; }
     }
 
-    // انیمیشن نرم با اینرسی
     let animationFrameId = null;
     function animateTo(target) {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
       function step() {
         const diff = target - currentRotation;
-        if (Math.abs(diff) < 0.2) {
-          currentRotation = target;
-          updateWheel(currentRotation);
-          display.textContent = products[currentIndex].name;
-          return;
-        }
+        if (Math.abs(diff) < 0.2) { currentRotation = target; updateWheel(currentRotation); display.textContent = products[currentIndex].name; return; }
         currentRotation += diff * 0.18;
         updateWheel(currentRotation);
-        
         const activeIdx = Math.round(-currentRotation / itemAngle);
-        if (activeIdx >= 0 && activeIdx < products.length) {
-          display.textContent = products[activeIdx].name;
-        }
-
+        if (activeIdx >= 0 && activeIdx < products.length) display.textContent = products[activeIdx].name;
         animationFrameId = requestAnimationFrame(step);
       }
       step();
     }
 
-    // کنترل حرکات ماوس و لمسی (Touch / Mouse drag)
-    let isDragging = false;
-    let startY = 0;
-    let startRotation = 0;
-    let lastY = 0;
-    let velocity = 0;
-    let lastTime = 0;
-
-    function onPointerDown(e) {
-      isDragging = true;
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      startY = e.pageY || (e.touches && e.touches[0].pageY);
-      lastY = startY;
-      startRotation = currentRotation;
-      lastTime = performance.now();
-      velocity = 0;
-    }
-
+    let isDragging = false, startY = 0, startRotation = 0, lastY = 0, velocity = 0, lastTime = 0;
+    function onPointerDown(e) { isDragging = true; if (animationFrameId) cancelAnimationFrame(animationFrameId); startY = e.pageY || (e.touches && e.touches[0].pageY); lastY = startY; startRotation = currentRotation; lastTime = performance.now(); velocity = 0; }
     function onPointerMove(e) {
       if (!isDragging) return;
       const currentY = e.pageY || (e.touches && e.touches[0].pageY);
-      const deltaY = currentY - startY;
       const currentTime = performance.now();
       const dt = currentTime - lastTime || 16;
-      
       velocity = (currentY - lastY) / dt;
-      lastY = currentY;
-      lastTime = currentTime;
-
-      const newRotation = startRotation - (deltaY * 0.45);
-      const minRotation = -(products.length - 1) * itemAngle;
-      const maxRotation = 0;
-
-      // افکت کشسانی در ابتدا و انتهای لیست
-      if (newRotation > maxRotation) {
-        currentRotation = maxRotation + (newRotation - maxRotation) * 0.3;
-      } else if (newRotation < minRotation) {
-        currentRotation = minRotation + (newRotation - minRotation) * 0.3;
-      } else {
-        currentRotation = newRotation;
-      }
-
+      lastY = currentY; lastTime = currentTime;
+      const newRotation = startRotation - ((currentY - startY) * 0.45);
+      currentRotation = Math.max(-(products.length - 1) * itemAngle, Math.min(0, newRotation));
       updateWheel(currentRotation);
-
       const activeIdx = Math.round(-currentRotation / itemAngle);
-      if (activeIdx >= 0 && activeIdx < products.length) {
-        display.textContent = products[activeIdx].name;
-      }
+      if (activeIdx >= 0 && activeIdx < products.length) display.textContent = products[activeIdx].name;
     }
+    function onPointerUp() { if (!isDragging) return; isDragging = false; let targetRot = currentRotation - (velocity * 38); setSelectedIndex(Math.max(0, Math.min(products.length - 1, Math.round(-targetRot / itemAngle))), true); }
 
-    function onPointerUp() {
-      if (!isDragging) return;
-      isDragging = false;
-
-      let targetRot = currentRotation - (velocity * 38);
-      let targetIndex = Math.round(-targetRot / itemAngle);
-      targetIndex = Math.max(0, Math.min(products.length - 1, targetIndex));
-      
-      setSelectedIndex(targetIndex, true);
-    }
-
-    // کلیک مستقیم روی هر سطر
-    items.forEach((item) => {
-      item.addEventListener('click', () => {
-        const idx = parseInt(item.dataset.index, 10);
-        setSelectedIndex(idx, true);
-      });
-    });
-
-    // اسکرول با چرخ ماوس
-    picker.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      if (e.deltaY > 0) {
-        setSelectedIndex(currentIndex + 1, true);
-      } else if (e.deltaY < 0) {
-        setSelectedIndex(currentIndex - 1, true);
-      }
-    }, { passive: false });
-
-    // لیسنرهای لمسی و ماوس
+    items.forEach((item) => item.addEventListener('click', () => setSelectedIndex(parseInt(item.dataset.index, 10), true)));
+    picker.addEventListener('wheel', (e) => { e.preventDefault(); setSelectedIndex(currentIndex + (e.deltaY > 0 ? 1 : -1), true); }, { passive: false });
     picker.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('mouseup', onPointerUp);
-
     picker.addEventListener('touchstart', onPointerDown, { passive: true });
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
-
-    // توست پیام
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2500);
-    }
-
-    document.getElementById('confirmButton').addEventListener('click', () => {
-      showToast(`«${products[currentIndex].name}» انتخاب شد ✅`);
-    });
-
-    // راه‌اندازی اولیه
+    document.getElementById('confirmButton').addEventListener('click', () => { toast.textContent = `«${products[currentIndex].name}» انتخاب شد ✅`; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); });
     setSelectedIndex(0, false);
   </script>
 </body>
