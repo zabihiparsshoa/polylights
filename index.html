@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>انتخابگر محصولات پارس شعاع</title>
+  <title>انتخابگر محصولات پلی لایت پارس شعاع</title>
   
   <style>
+    /* تعریف فونت مربّع */
     @font-face {
       font-family: 'Morabba';
       src: url('MorabbaVF.ttf') format('truetype');
@@ -18,17 +19,23 @@
       --primary: #4f46e5;
       --primary-hover: #4338ca;
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-      --card-bg: rgba(255, 255, 255, 0.98);
-      --card-border: rgba(255, 255, 255, 0.2);
-      --text-main: #1e293b;
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --card-border: rgba(255, 255, 255, 0.25);
+      --text-main: #0f172a;
       --text-muted: #64748b;
-      --item-height: 48px;
+      --item-height: 46px;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    /* ریست */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    body, button, input, div, span, h1, p {
-      font-family: 'Morabba', -apple-system, sans-serif !important;
+    body, button, input, select, textarea, div, span, h1, h2, p {
+      font-family: 'Morabba', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     body {
@@ -43,78 +50,241 @@
 
     .container {
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       background: var(--card-bg);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
       border-radius: 28px;
-      padding: 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      padding: 24px 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--card-border);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
+      animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .header { text-align: center; }
-    .header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
-    .header p { font-size: 0.9rem; color: var(--text-muted); }
-
-    /* Features Grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .feature-item {
-      background: #f8fafc;
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      color: #334155;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid #e2e8f0;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Wheel Styles */
+    .header {
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* گردونه سه‌بعدی iOS */
     .wheel-picker-wrapper {
       position: relative;
       width: 100%;
-      height: 200px;
-      background: #f1f5f9;
-      border-radius: 16px;
+      height: 230px;
+      background: #f8fafc;
+      border-radius: 20px;
       overflow: hidden;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e2e8f0;
       perspective: 1000px;
+      user-select: none;
       touch-action: none;
+      cursor: grab;
+    }
+
+    .wheel-picker-wrapper:active {
+      cursor: grabbing;
     }
 
     .wheel-selection-indicator {
       position: absolute;
       top: calc(50% - (var(--item-height) / 2));
-      left: 8px; right: 8px; height: var(--item-height);
-      background: rgba(99, 102, 241, 0.1);
-      border: 2px solid #6366f1;
+      left: 10px;
+      right: 10px;
+      height: var(--item-height);
+      background: rgba(99, 102, 241, 0.12);
+      border: 2px solid rgba(99, 102, 241, 0.4);
       border-radius: 12px;
       pointer-events: none;
       z-index: 2;
     }
 
-    .wheel-scroller { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; }
-    .wheel-item {
-      position: absolute; width: 100%; height: var(--item-height);
-      top: calc(50% - (var(--item-height) / 2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; color: #94a3b8; backface-visibility: hidden;
-      transition: color 0.2s; padding: 0 10px;
+    .wheel-overlay-top,
+    .wheel-overlay-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: calc(50% - (var(--item-height) / 2));
+      pointer-events: none;
+      z-index: 3;
     }
-    .wheel-item.selected { color: #1e1b4b; font-weight: 800; font-size: 1.25rem; }
+
+    .wheel-overlay-top {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%);
+    }
+
+    .wheel-overlay-bottom {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%);
+    }
+
+    .wheel-scroller {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .wheel-item {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: var(--item-height);
+      top: calc(50% - (var(--item-height) / 2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #64748b;
+      backface-visibility: hidden;
+      transition: color 0.15s ease;
+      padding: 0 12px;
+      text-align: center;
+    }
+
+    .wheel-item.selected {
+      color: #4338ca;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    /* بخش ویژگی‌های ظریف و ریز زیر اسکرول بار */
+    .specs-panel {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .spec-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      background: #ffffff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .spec-badge.full-width {
+      grid-column: span 2;
+      justify-content: center;
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: #c7d2fe;
+    }
+
+    .spec-icon {
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    /* نمایش محصول انتخاب شده */
+    .result-card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .result-label {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e1b4b;
+      background: #e0e7ff;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid #c7d2fe;
+      max-width: 60%;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     .confirm-btn {
-      width: 100%; padding: 14px;
-      background: #4f46e5; color: white;
-      border: none; border-radius: 14px;
-      font-size: 1.1rem; font-weight: 700; cursor: pointer;
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 14px -3px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .confirm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px -4px rgba(79, 70, 229, 0.5);
+    }
+
+    .confirm-btn:active {
+      transform: translateY(1px);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -122,77 +292,257 @@
 
   <main class="container">
     <header class="header">
-      <h1>انتخاب محصول</h1>
-      <p>محصول مورد نظر خود را انتخاب کنید</p>
+      <h1>انتخاب چراغ پلی لایت</h1>
+      <p>برای انتخاب مدل، گردونه را بچرخانید</p>
     </header>
 
-    <!-- بخش ویژگی‌ها -->
-    <div class="features-grid">
-      <div class="feature-item">✅ بدون فلیکر</div>
-      <div class="feature-item">✅ بدنه: ABS</div>
-      <div class="feature-item">✅ ۱۸ ماه گارانتی</div>
-      <div class="feature-item">✅ نصب: روکار</div>
-      <div class="feature-item" style="grid-column: span 2; justify-content: center;">🌧 دارای استاندارد IP64</div>
-    </div>
-
-    <div class="wheel-picker-wrapper" id="wheelPicker">
+    <!-- ویل پیکر -->
+    <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox" aria-label="فهرست محصولات پلی لایت">
+      <div class="wheel-overlay-top"></div>
       <div class="wheel-selection-indicator"></div>
+      <div class="wheel-overlay-bottom"></div>
       <div class="wheel-scroller" id="wheelScroller"></div>
     </div>
 
-    <button class="confirm-btn" id="confirmButton">تایید و مشاهده</button>
+    <!-- مشخصات و ویژگی‌های ریز زیر گردونه -->
+    <section class="specs-panel" aria-label="مشخصات کلی محصول">
+      <div class="spec-badge">
+        <span class="spec-icon">✨</span>
+        <span>بدون فلیکر (بدون سوسو)</span>
+      </div>
+      <div class="spec-badge">
+        <span class="spec-icon">🛡️</span>
+        <span>جنس بدنه: ABS مقاوم</span>
+      </div>
+      <div class="spec-badge">
+        <span class="spec-icon">🔧</span>
+        <span>قابلیت نصب: روکار</span>
+      </div>
+      <div class="spec-badge">
+        <span class="spec-icon">📜</span>
+        <span>۱۸ ماه گارانتی تعویض</span>
+      </div>
+      <div class="spec-badge full-width">
+        <span class="spec-icon">🌧️</span>
+        <span>دارای حفاظت استاندارد محیطی IP64</span>
+      </div>
+    </section>
+
+    <!-- کادر نمایش انتخاب فعلی -->
+    <div class="result-card">
+      <span class="result-label">محصول انتخابی:</span>
+      <span class="result-value" id="selectedProductDisplay">---</span>
+    </div>
+
+    <button class="confirm-btn" id="confirmButton">تایید و مشاهده جزئیات</button>
   </main>
 
+  <div class="toast" id="toast"></div>
+
   <script>
+    // لیست دقیق ۹ آپشن مشخص شده
     const products = [
-      { name: "چراغ پلی لایت خطی 4 وات" },
-      { name: "چراغ پلی لایت خطی 6 وات" },
-      { name: "چراغ پلی لایت خطی 8 وات" },
-      { name: "چراغ پلی لایت 4 وات (سفید)" },
-      { name: "چراغ پلی لایت 4 وات (مشکی)" },
-      { name: "چراغ پلی لایت 6 وات (سفید)" },
-      { name: "چراغ پلی لایت 6 وات (مشکی)" },
-      { name: "چراغ پلی لایت 8 وات (سفید)" },
-      { name: "چراغ پلی لایت 8 وات (مشکی)" }
+      { id: 1, name: "چراغ پلی لایت خطی ۴ وات (بدنه مشکی)" },
+      { id: 2, name: "چراغ پلی لایت خطی ۶ وات (بدنه مشکی)" },
+      { id: 3, name: "چراغ پلی لایت خطی ۸ وات (بدنه مشکی)" },
+      { id: 4, name: "چراغ پلی لایت ۴ وات (بدنه سفید)" },
+      { id: 5, name: "چراغ پلی لایت ۴ وات (بدنه مشکی)" },
+      { id: 6, name: "چراغ پلی لایت ۶ وات (بدنه سفید)" },
+      { id: 7, name: "چراغ پلی لایت ۶ وات (بدنه مشکی)" },
+      { id: 8, name: "چراغ پلی لایت ۸ وات (بدنه سفید)" },
+      { id: 9, name: "چراغ پلی لایت ۸ وات (بدنه مشکی)" }
     ];
 
-    const itemAngle = 28;
-    const radius = 120;
+    const itemAngle = 24;
+    const radius = 145;
     let currentIndex = 0;
     let currentRotation = 0;
 
     const scroller = document.getElementById('wheelScroller');
-    
+    const display = document.getElementById('selectedProductDisplay');
+    const toast = document.getElementById('toast');
+    const picker = document.getElementById('wheelPicker');
+
+    // رندر آیتم‌ها
     products.forEach((prod, index) => {
       const item = document.createElement('div');
       item.className = `wheel-item ${index === 0 ? 'selected' : ''}`;
+      item.dataset.index = index;
       item.textContent = prod.name;
       scroller.appendChild(item);
     });
 
     const items = scroller.querySelectorAll('.wheel-item');
 
+    // محاسبه و اعمال موقعیت ۳ بعدی المان‌ها
     function updateWheel(rotationDeg) {
       items.forEach((item, index) => {
         const itemRotation = (index * itemAngle) + rotationDeg;
         const rad = (itemRotation * Math.PI) / 180;
+        
         const translateY = -Math.sin(rad) * radius;
         const translateZ = Math.cos(rad) * radius - radius;
-        
-        item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${itemRotation}deg)`;
-        item.style.opacity = Math.max(0.1, 1 - Math.abs(itemRotation / 90));
-        
-        if (Math.abs(itemRotation) < itemAngle / 2) item.classList.add('selected');
-        else item.classList.remove('selected');
+        const rotateX = itemRotation;
+
+        const normalizedAngle = Math.abs((itemRotation % 360 + 360) % 360);
+        const distance = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
+        const opacity = Math.max(0.12, 1 - (distance / 75));
+
+        item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg)`;
+        item.style.opacity = opacity;
+
+        if (Math.abs(itemRotation) < itemAngle / 2) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
       });
     }
 
-    // Logic for rotation... (same as previous optimized code)
-    // Pointer/Touch events omitted here for brevity in response, 
-    // but ensure you include the event listeners from previous code.
-    
-    // Simple set rotation to load
-    updateWheel(0);
+    // هدایت به یک آیتم مشخص
+    function setSelectedIndex(index, animate = true) {
+      index = Math.max(0, Math.min(products.length - 1, index));
+      currentIndex = index;
+      const targetRotation = -index * itemAngle;
+
+      if (animate) {
+        animateTo(targetRotation);
+      } else {
+        currentRotation = targetRotation;
+        updateWheel(currentRotation);
+        display.textContent = products[currentIndex].name;
+      }
+    }
+
+    // انیمیشن نرم با اینرسی
+    let animationFrameId = null;
+    function animateTo(target) {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
+      function step() {
+        const diff = target - currentRotation;
+        if (Math.abs(diff) < 0.2) {
+          currentRotation = target;
+          updateWheel(currentRotation);
+          display.textContent = products[currentIndex].name;
+          return;
+        }
+        currentRotation += diff * 0.18;
+        updateWheel(currentRotation);
+        
+        const activeIdx = Math.round(-currentRotation / itemAngle);
+        if (activeIdx >= 0 && activeIdx < products.length) {
+          display.textContent = products[activeIdx].name;
+        }
+
+        animationFrameId = requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    // کنترل حرکات ماوس و لمسی (Touch / Mouse drag)
+    let isDragging = false;
+    let startY = 0;
+    let startRotation = 0;
+    let lastY = 0;
+    let velocity = 0;
+    let lastTime = 0;
+
+    function onPointerDown(e) {
+      isDragging = true;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      startY = e.pageY || (e.touches && e.touches[0].pageY);
+      lastY = startY;
+      startRotation = currentRotation;
+      lastTime = performance.now();
+      velocity = 0;
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      const currentY = e.pageY || (e.touches && e.touches[0].pageY);
+      const deltaY = currentY - startY;
+      const currentTime = performance.now();
+      const dt = currentTime - lastTime || 16;
+      
+      velocity = (currentY - lastY) / dt;
+      lastY = currentY;
+      lastTime = currentTime;
+
+      const newRotation = startRotation - (deltaY * 0.45);
+      const minRotation = -(products.length - 1) * itemAngle;
+      const maxRotation = 0;
+
+      // افکت کشسانی در ابتدا و انتهای لیست
+      if (newRotation > maxRotation) {
+        currentRotation = maxRotation + (newRotation - maxRotation) * 0.3;
+      } else if (newRotation < minRotation) {
+        currentRotation = minRotation + (newRotation - minRotation) * 0.3;
+      } else {
+        currentRotation = newRotation;
+      }
+
+      updateWheel(currentRotation);
+
+      const activeIdx = Math.round(-currentRotation / itemAngle);
+      if (activeIdx >= 0 && activeIdx < products.length) {
+        display.textContent = products[activeIdx].name;
+      }
+    }
+
+    function onPointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+
+      let targetRot = currentRotation - (velocity * 38);
+      let targetIndex = Math.round(-targetRot / itemAngle);
+      targetIndex = Math.max(0, Math.min(products.length - 1, targetIndex));
+      
+      setSelectedIndex(targetIndex, true);
+    }
+
+    // کلیک مستقیم روی هر سطر
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        const idx = parseInt(item.dataset.index, 10);
+        setSelectedIndex(idx, true);
+      });
+    });
+
+    // اسکرول با چرخ ماوس
+    picker.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        setSelectedIndex(currentIndex + 1, true);
+      } else if (e.deltaY < 0) {
+        setSelectedIndex(currentIndex - 1, true);
+      }
+    }, { passive: false });
+
+    // لیسنرهای لمسی و ماوس
+    picker.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    picker.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('touchend', onPointerUp);
+
+    // توست پیام
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    document.getElementById('confirmButton').addEventListener('click', () => {
+      showToast(`«${products[currentIndex].name}» انتخاب شد ✅`);
+    });
+
+    // راه‌اندازی اولیه
+    setSelectedIndex(0, false);
   </script>
 </body>
 </html>
