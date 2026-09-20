@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>انتخابگر چرخشی محصولات | Wheel Picker</title>
+  
+  <!-- فونت زیبا و مدرن وزیرمتن -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --highlight: #6366f1;
+      --item-height: 48px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--text-main);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35),
+                  0 0 0 1px var(--card-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .header {
+      text-align: center;
+      width: 100%;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* iOS Style 3D Wheel Picker Container */
+    .wheel-picker-wrapper {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      background: #f8fafc;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e2e8f0;
+      perspective: 1000px;
+      user-select: none;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .wheel-picker-wrapper:active {
+      cursor: grabbing;
+    }
+
+    /* Selection Indicator / Highlight Bar */
+    .wheel-selection-indicator {
+      position: absolute;
+      top: calc(50% - (var(--item-height) / 2));
+      left: 12px;
+      right: 12px;
+      height: var(--item-height);
+      background: rgba(99, 102, 241, 0.12);
+      border: 2px solid rgba(99, 102, 241, 0.35);
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Top & Bottom Gradient Shadows */
+    .wheel-overlay-top,
+    .wheel-overlay-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: calc(50% - (var(--item-height) / 2));
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .wheel-overlay-top {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%);
+    }
+
+    .wheel-overlay-bottom {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(248, 250, 252, 0.95) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%);
+    }
+
+    .wheel-scroller {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .wheel-item {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: var(--item-height);
+      top: calc(50% - (var(--item-height) / 2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: #64748b;
+      backface-visibility: hidden;
+      transition: color 0.15s ease, transform 0.1s ease;
+      padding: 0 16px;
+    }
+
+    .wheel-item.selected {
+      color: #4338ca;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    /* Selection Result Display */
+    .result-card {
+      width: 100%;
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .result-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e1b4b;
+      background: #e0e7ff;
+      padding: 4px 14px;
+      border-radius: 999px;
+      border: 1px solid #c7d2fe;
+    }
+
+    .confirm-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .confirm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px -4px rgba(79, 70, 229, 0.5);
+    }
+
+    .confirm-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Modal / Alert Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+    <header class="header">
+      <h1>انتخاب محصول</h1>
+      <p>برای انتخاب، گردونه را بالا یا پایین بچرخانید</p>
+    </header>
+
+    <!-- ویجت چرخشی Wheel Picker -->
+    <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox" aria-label="فهرست محصولات">
+      <div class="wheel-overlay-top"></div>
+      <div class="wheel-selection-indicator"></div>
+      <div class="wheel-overlay-bottom"></div>
+      
+      <div class="wheel-scroller" id="wheelScroller">
+        <!-- آیتم‌ها به صورت پویا با جاوااسکریپت افزوده می‌شوند -->
+      </div>
+    </div>
+
+    <!-- باکس نمایش آیتم انتخاب شده -->
+    <div class="result-card">
+      <span class="result-label">محصول انتخاب‌شده:</span>
+      <span class="result-value" id="selectedProductDisplay">محصول ۱</span>
+    </div>
+
+    <!-- دکمه تایید انتخاب -->
+    <button class="confirm-btn" id="confirmButton">تایید و ادامه</button>
+  </main>
+
+  <!-- پیام اعلان Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // فهرست ۸ محصول فارسی
+    const products = [
+      { id: 1, name: "محصول ۱" },
+      { id: 2, name: "محصول ۲" },
+      { id: 3, name: "محصول ۳" },
+      { id: 4, name: "محصول ۴" },
+      { id: 5, name: "محصول ۵" },
+      { id: 6, name: "محصول ۶" },
+      { id: 7, name: "محصول ۷" },
+      { id: 8, name: "محصول ۸" }
+    ];
+
+    const itemAngle = 26; // زاویه چرخش هر آیتم در نمای سه‌بعدی
+    const radius = 140; // شعاع استوانه سه‌بعدی چرخ
+    let currentIndex = 0;
+    let currentRotation = 0;
+
+    const scroller = document.getElementById('wheelScroller');
+    const display = document.getElementById('selectedProductDisplay');
+    const toast = document.getElementById('toast');
+    const picker = document.getElementById('wheelPicker');
+
+    // ایجاد المان‌های محصولات درون چرخ
+    products.forEach((prod, index) => {
+      const item = document.createElement('div');
+      item.className = `wheel-item ${index === 0 ? 'selected' : ''}`;
+      item.dataset.index = index;
+      item.textContent = prod.name;
+      scroller.appendChild(item);
+    });
+
+    const items = scroller.querySelectorAll('.wheel-item');
+
+    function updateWheel(rotationDeg) {
+      items.forEach((item, index) => {
+        const itemRotation = (index * itemAngle) + rotationDeg;
+        const rad = (itemRotation * Math.PI) / 180;
+        
+        // محاسبه فاصله عمودی و عمق سه‌بعدی
+        const translateY = -Math.sin(rad) * radius;
+        const translateZ = Math.cos(rad) * radius - radius;
+        const rotateX = itemRotation;
+
+        // تنظیم شفافیت و مقیاس بر اساس زاویه نسبت به مرکز
+        const normalizedAngle = Math.abs((itemRotation % 360 + 360) % 360);
+        const distance = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
+        const opacity = Math.max(0.1, 1 - (distance / 70));
+
+        item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg)`;
+        item.style.opacity = opacity;
+
+        if (Math.abs(itemRotation) < itemAngle / 2) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+    }
+
+    function setSelectedIndex(index, animate = true) {
+      index = Math.max(0, Math.min(products.length - 1, index));
+      currentIndex = index;
+      const targetRotation = -index * itemAngle;
+
+      if (animate) {
+        animateTo(targetRotation);
+      } else {
+        currentRotation = targetRotation;
+        updateWheel(currentRotation);
+        display.textContent = products[currentIndex].name;
+      }
+    }
+
+    let animationFrameId = null;
+    function animateTo(target) {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
+      function step() {
+        const diff = target - currentRotation;
+        if (Math.abs(diff) < 0.2) {
+          currentRotation = target;
+          updateWheel(currentRotation);
+          display.textContent = products[currentIndex].name;
+          return;
+        }
+        currentRotation += diff * 0.2;
+        updateWheel(currentRotation);
+        
+        // به‌روزرسانی زنده اندیس انتخاب شده
+        const activeIdx = Math.round(-currentRotation / itemAngle);
+        if (activeIdx >= 0 && activeIdx < products.length) {
+          display.textContent = products[activeIdx].name;
+        }
+
+        animationFrameId = requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    // تعامل لمسی و ماوس (Drag & Momentum physics)
+    let isDragging = false;
+    let startY = 0;
+    let startRotation = 0;
+    let lastY = 0;
+    let velocity = 0;
+    let lastTime = 0;
+
+    function onPointerDown(e) {
+      isDragging = true;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      startY = e.pageY || (e.touches && e.touches[0].pageY);
+      lastY = startY;
+      startRotation = currentRotation;
+      lastTime = performance.now();
+      velocity = 0;
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      const currentY = e.pageY || (e.touches && e.touches[0].pageY);
+      const deltaY = currentY - startY;
+      const currentTime = performance.now();
+      const dt = currentTime - lastTime || 16;
+      
+      velocity = (currentY - lastY) / dt;
+      lastY = currentY;
+      lastTime = currentTime;
+
+      // تبدیل تغییر مکان به درجه چرخش
+      const newRotation = startRotation - (deltaY * 0.45);
+      
+      // محدودیت انتهای لیست با حالت کشسانی (Rubber band)
+      const minRotation = -(products.length - 1) * itemAngle;
+      const maxRotation = 0;
+
+      if (newRotation > maxRotation) {
+        currentRotation = maxRotation + (newRotation - maxRotation) * 0.3;
+      } else if (newRotation < minRotation) {
+        currentRotation = minRotation + (newRotation - minRotation) * 0.3;
+      } else {
+        currentRotation = newRotation;
+      }
+
+      updateWheel(currentRotation);
+
+      const activeIdx = Math.round(-currentRotation / itemAngle);
+      if (activeIdx >= 0 && activeIdx < products.length) {
+        display.textContent = products[activeIdx].name;
+      }
+    }
+
+    function onPointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+
+      // اضافه کردن اثر اینرسی و پرتاب (Inertia)
+      let targetRot = currentRotation - (velocity * 40);
+      let targetIndex = Math.round(-targetRot / itemAngle);
+      targetIndex = Math.max(0, Math.min(products.length - 1, targetIndex));
+      
+      setSelectedIndex(targetIndex, true);
+    }
+
+    // چرخش با کلیک روی آیتم‌ها
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        const idx = parseInt(item.dataset.index, 10);
+        setSelectedIndex(idx, true);
+      });
+    });
+
+    // پشتیبانی از چرخ ماوس (Mouse Wheel)
+    picker.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        setSelectedIndex(currentIndex + 1, true);
+      } else if (e.deltaY < 0) {
+        setSelectedIndex(currentIndex - 1, true);
+      }
+    }, { passive: false });
+
+    // ثبت رخدادهای ماوس و تاچ
+    picker.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    picker.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('touchend', onPointerUp);
+
+    // دکمه تایید و نمایش Toast
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    document.getElementById('confirmButton').addEventListener('click', () => {
+      showToast(`«${products[currentIndex].name}» با موفقیت انتخاب شد ✨`);
+    });
+
+    // راه‌اندازی اولیه
+    setSelectedIndex(0, false);
+  </script>
+</body>
+</html>
