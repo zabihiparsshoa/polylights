@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>انتخابگر محصولات پلی لایت پارس شعاع</title>
+  <title>پارس شعاع - انتخاب پلی‌لایت (تم تاریک)</title>
   
   <style>
-    /* تعریف فونت مربّع */
     @font-face {
       font-family: 'Morabba';
       src: url('MorabbaVF.ttf') format('truetype');
@@ -16,14 +15,12 @@
     }
 
     :root {
-      --primary: #4f46e5;
-      --primary-hover: #4338ca;
-      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
-      --card-bg: rgba(255, 255, 255, 0.96);
-      --card-border: rgba(255, 255, 255, 0.25);
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --item-height: 50px; /* کمی افزایش ارتفاع برای سایز جدید فونت */
+      --primary-glow: #6366f1;
+      --bg-dark: radial-gradient(ellipse at 50% 0%, #1e1b4b 0%, #090a0f 50%, #030305 100%);
+      --card-bg: rgba(15, 17, 23, 0.88);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --wheel-bg: #090a0f;
+      --item-height: 66px;
     }
 
     *, *::before, *::after {
@@ -33,175 +30,271 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body, button, input, select, textarea, div, span, h1, h2, p {
-      font-family: 'Morabba', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    body, div, span, img {
+      font-family: 'Morabba', -apple-system, sans-serif !important;
     }
 
     body {
       min-height: 100vh;
-      background: var(--bg-gradient);
+      background: var(--bg-dark);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 16px;
-      color: var(--text-main);
+      color: #f8fafc;
     }
 
     .container {
       width: 100%;
-      max-width: 430px;
+      max-width: 480px;
       background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border-radius: 28px;
-      padding: 24px 20px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--card-border);
+      backdrop-filter: blur(28px);
+      border-radius: 36px;
+      padding: 32px 20px;
+      box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.9),
+                  0 0 0 1px var(--card-border),
+                  0 0 40px rgba(99, 102, 241, 0.08);
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 590px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    /* Top Logo */
+    .top-logo-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 52px;
     }
 
-    .header { text-align: center; }
-    .header h1 { font-size: 1.55rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
-    .header p { font-size: 0.9rem; color: var(--text-muted); font-weight: 400; }
+    .top-logo {
+      max-height: 50px;
+      max-width: 130px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+    }
 
-    /* گردونه سه‌بعدی */
+    /* Huge Dark Wheel Picker */
     .wheel-picker-wrapper {
       position: relative;
       width: 100%;
-      height: 230px;
-      background: #f8fafc;
-      border-radius: 20px;
+      height: 380px;
+      background: var(--wheel-bg);
+      border-radius: 26px;
       overflow: hidden;
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
-      border: 1px solid #e2e8f0;
-      perspective: 1000px;
+      box-shadow: inset 0 3px 20px rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      perspective: 1200px;
       user-select: none;
       touch-action: none;
       cursor: grab;
     }
 
+    .wheel-picker-wrapper:active {
+      cursor: grabbing;
+    }
+
+    /* Luminous Selection Indicator */
     .wheel-selection-indicator {
       position: absolute;
       top: calc(50% - (var(--item-height) / 2));
-      left: 10px; right: 10px; height: var(--item-height);
-      background: rgba(99, 102, 241, 0.12);
-      border: 2px solid rgba(99, 102, 241, 0.4);
-      border-radius: 12px;
+      left: 10px;
+      right: 10px;
+      height: var(--item-height);
+      background: rgba(99, 102, 241, 0.14);
+      border: 2px solid rgba(129, 140, 248, 0.55);
+      border-radius: 18px;
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.25), inset 0 0 15px rgba(99, 102, 241, 0.1);
       pointer-events: none;
       z-index: 2;
     }
 
-    .wheel-overlay-top, .wheel-overlay-bottom {
-      position: absolute; left: 0; right: 0; height: calc(50% - (var(--item-height) / 2));
-      pointer-events: none; z-index: 3;
+    /* Dark Overlays / Depth Gradients */
+    .wheel-overlay-top,
+    .wheel-overlay-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: calc(50% - (var(--item-height) / 2));
+      pointer-events: none;
+      z-index: 3;
     }
-    .wheel-overlay-top { top: 0; background: linear-gradient(to bottom, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%); }
-    .wheel-overlay-bottom { bottom: 0; background: linear-gradient(to top, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.4) 70%, transparent 100%); }
 
-    .wheel-scroller { position: absolute; width: 100%; height: 100%; top: 0; left: 0; transform-style: preserve-3d; will-change: transform; }
+    .wheel-overlay-top {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(9, 10, 15, 0.98) 15%, rgba(9, 10, 15, 0.5) 80%, transparent 100%);
+    }
 
-    /* تغییرات در wheel-item: راست‌چین و بزرگتر */
+    .wheel-overlay-bottom {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(9, 10, 15, 0.98) 15%, rgba(9, 10, 15, 0.5) 80%, transparent 100%);
+    }
+
+    .wheel-scroller {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* Wheel Items */
     .wheel-item {
       position: absolute;
-      left: 0; width: 100%; height: var(--item-height);
+      left: 0;
+      width: 100%;
+      height: var(--item-height);
       top: calc(50% - (var(--item-height) / 2));
       display: flex;
       align-items: center;
-      justify-content: flex-start; /* راست‌چین کردن */
-      padding-right: 25px;         /* فاصله از لبه راست */
-      font-size: 1.25rem;          /* سایز بزرگتر */
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 1.35rem;
       font-weight: 500;
-      color: #64748b;
+      color: #52525b; /* Muted Zinc */
       backface-visibility: hidden;
-      transition: color 0.15s ease;
+      transition: color 0.15s ease, text-shadow 0.15s ease;
+      direction: rtl;
+    }
+
+    .wheel-item-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       text-align: right;
     }
 
-    .wheel-item.selected {
-      color: #4338ca;
-      font-weight: 800;
-      font-size: 1.4rem;           /* سایز بزرگتر برای انتخاب */
+    /* High-contrast Badges */
+    .wheel-item-badge {
+      font-size: 0.92rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-right: 12px;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
     }
 
-    .specs-panel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: #f1f5f9; padding: 10px; border-radius: 14px; border: 1px solid #e2e8f0; }
-    .spec-badge { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #334155; background: #ffffff; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(226, 232, 240, 0.8); }
-    .spec-badge.full-width { grid-column: span 2; justify-content: center; background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
-    
-    .result-card { width: 100%; background: #ffffff; border-radius: 14px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
-    .result-label { font-size: 0.88rem; color: var(--text-muted); font-weight: 500; }
-    .result-value { font-size: 0.95rem; font-weight: 700; color: #1e1b4b; background: #e0e7ff; padding: 4px 12px; border-radius: 999px; border: 1px solid #c7d2fe; max-width: 60%; text-align: center; }
+    /* White body color tag */
+    .wheel-item-badge.badge-white {
+      background: #f8fafc;
+      color: #09090b;
+      border: 1px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
+    }
 
-    .confirm-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; border: none; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; }
-    .toast { position: fixed; bottom: 24px; background: #0f172a; color: #fff; padding: 12px 22px; border-radius: 999px; opacity: 0; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 100; }
-    .toast.show { opacity: 1; transform: translateY(0); }
+    /* Black body color tag */
+    .wheel-item-badge.badge-black {
+      background: #18181b;
+      color: #d4d4d8;
+      border: 1px solid #3f3f46;
+    }
+
+    /* Active Selected Item */
+    .wheel-item.selected {
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.6rem;
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+    }
+
+    .wheel-item.selected .wheel-item-badge.badge-white {
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+      transform: scale(1.04);
+    }
+
+    .wheel-item.selected .wheel-item-badge.badge-black {
+      border-color: #818cf8;
+      color: #ffffff;
+      background: #27272a;
+      box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
+      transform: scale(1.04);
+    }
+
+    /* Bottom Typo Logo */
+     /* Bottom Typo Logo */
+    .bottom-logo-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 24px; /* افزایش ارتفاع برای فضای بیشتر */
+      margin-top: 10px;
+    }
+
+    .bottom-logo {
+      width: 100%; 
+      object-fit: contain;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
+    }
+
   </style>
 </head>
 <body>
-  <main class="container">
-    <header class="header">
-      <h1>انتخاب چراغ پلی لایت</h1>
-      <p>برای انتخاب مدل، گردونه را بچرخانید</p>
-    </header>
 
-    <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox">
+  <main class="container">
+    <!-- Top Logo -->
+    <div class="top-logo-wrap">
+      <img src="logo-icon.png" alt="Pars Shoa Icon" class="top-logo">
+    </div>
+
+    <!-- Center Huge Wheel -->
+    <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox" aria-label="فهرست محصولات">
       <div class="wheel-overlay-top"></div>
       <div class="wheel-selection-indicator"></div>
       <div class="wheel-overlay-bottom"></div>
       <div class="wheel-scroller" id="wheelScroller"></div>
     </div>
 
-    <section class="specs-panel">
-      <div class="spec-badge">✨ بدون فلیکر</div>
-      <div class="spec-badge">🛡️ بدنه: ABS مقاوم</div>
-      <div class="spec-badge">🔧 نصب: روکار</div>
-      <div class="spec-badge">📜 ۱۸ ماه گارانتی</div>
-      <div class="spec-badge full-width">🌧️ حفاظت محیطی IP64</div>
-    </section>
-
-    <div class="result-card">
-      <span class="result-label">محصول انتخابی:</span>
-      <span class="result-value" id="selectedProductDisplay">---</span>
+    <!-- Bottom Typo Logo -->
+    <div class="bottom-logo-wrap">
+      <img src="pst-typo.png" alt="Pars Shoa Typography" class="bottom-logo">
     </div>
-
-    <button class="confirm-btn" id="confirmButton">تایید و مشاهده جزئیات</button>
   </main>
-
-  <div class="toast" id="toast"></div>
 
   <script>
     const products = [
-      { name: "چراغ پلی لایت خطی ۴ وات (مشکی)" },
-      { name: "چراغ پلی لایت خطی ۶ وات (مشکی)" },
-      { name: "چراغ پلی لایت خطی ۸ وات (مشکی)" },
-      { name: "چراغ پلی لایت ۴ وات (سفید)" },
-      { name: "چراغ پلی لایت ۴ وات (مشکی)" },
-      { name: "چراغ پلی لایت ۶ وات (سفید)" },
-      { name: "چراغ پلی لایت ۶ وات (مشکی)" },
-      { name: "چراغ پلی لایت ۸ وات (سفید)" },
-      { name: "چراغ پلی لایت ۸ وات (مشکی)" }
+      { name: "پلی‌لایت خطی ۴ وات", color: "مشکی", colorType: "black" },
+      { name: "پلی‌لایت خطی ۶ وات", color: "مشکی", colorType: "black" },
+      { name: "پلی‌لایت خطی ۸ وات", color: "مشکی", colorType: "black" },
+      { name: "پلی‌لایت ۴ وات", color: "سفید", colorType: "white" },
+      { name: "پلی‌لایت ۴ وات", color: "مشکی", colorType: "black" },
+      { name: "پلی‌لایت ۶ وات", color: "سفید", colorType: "white" },
+      { name: "پلی‌لایت ۶ وات", color: "مشکی", colorType: "black" },
+      { name: "پلی‌لایت ۸ وات", color: "سفید", colorType: "white" },
+      { name: "پلی‌لایت ۸ وات", color: "مشکی", colorType: "black" }
     ];
 
-    const itemAngle = 24;
-    const radius = 145;
+    const itemAngle = 23;
+    const radius = 220;
     let currentIndex = 0;
     let currentRotation = 0;
 
     const scroller = document.getElementById('wheelScroller');
-    const display = document.getElementById('selectedProductDisplay');
-    const toast = document.getElementById('toast');
     const picker = document.getElementById('wheelPicker');
 
+    // Build wheel items
     products.forEach((prod, index) => {
       const item = document.createElement('div');
       item.className = `wheel-item ${index === 0 ? 'selected' : ''}`;
       item.dataset.index = index;
-      item.textContent = prod.name;
+
+      const title = document.createElement('span');
+      title.className = 'wheel-item-title';
+      title.textContent = prod.name;
+
+      const badge = document.createElement('span');
+      badge.className = `wheel-item-badge badge-${prod.colorType}`;
+      badge.textContent = prod.color;
+
+      item.appendChild(title);
+      item.appendChild(badge);
       scroller.appendChild(item);
     });
 
@@ -211,18 +304,22 @@
       items.forEach((item, index) => {
         const itemRotation = (index * itemAngle) + rotationDeg;
         const rad = (itemRotation * Math.PI) / 180;
+        
         const translateY = -Math.sin(rad) * radius;
         const translateZ = Math.cos(rad) * radius - radius;
-        
+
         const normalizedAngle = Math.abs((itemRotation % 360 + 360) % 360);
         const distance = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
-        const opacity = Math.max(0.12, 1 - (distance / 75));
+        const opacity = Math.max(0.06, 1 - (distance / 65));
 
         item.style.transform = `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${itemRotation}deg)`;
         item.style.opacity = opacity;
 
-        if (Math.abs(itemRotation) < itemAngle / 2) item.classList.add('selected');
-        else item.classList.remove('selected');
+        if (Math.abs(itemRotation) < itemAngle / 2) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
       });
     }
 
@@ -230,51 +327,110 @@
       index = Math.max(0, Math.min(products.length - 1, index));
       currentIndex = index;
       const targetRotation = -index * itemAngle;
-      if (animate) animateTo(targetRotation);
-      else { currentRotation = targetRotation; updateWheel(currentRotation); display.textContent = products[currentIndex].name; }
+
+      if (animate) {
+        animateTo(targetRotation);
+      } else {
+        currentRotation = targetRotation;
+        updateWheel(currentRotation);
+      }
     }
 
     let animationFrameId = null;
     function animateTo(target) {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
       function step() {
         const diff = target - currentRotation;
-        if (Math.abs(diff) < 0.2) { currentRotation = target; updateWheel(currentRotation); display.textContent = products[currentIndex].name; return; }
+        if (Math.abs(diff) < 0.2) {
+          currentRotation = target;
+          updateWheel(currentRotation);
+          return;
+        }
         currentRotation += diff * 0.18;
         updateWheel(currentRotation);
-        const activeIdx = Math.round(-currentRotation / itemAngle);
-        if (activeIdx >= 0 && activeIdx < products.length) display.textContent = products[activeIdx].name;
         animationFrameId = requestAnimationFrame(step);
       }
       step();
     }
 
-    let isDragging = false, startY = 0, startRotation = 0, lastY = 0, velocity = 0, lastTime = 0;
-    function onPointerDown(e) { isDragging = true; if (animationFrameId) cancelAnimationFrame(animationFrameId); startY = e.pageY || (e.touches && e.touches[0].pageY); lastY = startY; startRotation = currentRotation; lastTime = performance.now(); velocity = 0; }
+    // Touch & Mouse Drag Physics
+    let isDragging = false;
+    let startY = 0;
+    let startRotation = 0;
+    let lastY = 0;
+    let velocity = 0;
+    let lastTime = 0;
+
+    function onPointerDown(e) {
+      isDragging = true;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      startY = e.pageY || (e.touches && e.touches[0].pageY);
+      lastY = startY;
+      startRotation = currentRotation;
+      lastTime = performance.now();
+      velocity = 0;
+    }
+
     function onPointerMove(e) {
       if (!isDragging) return;
       const currentY = e.pageY || (e.touches && e.touches[0].pageY);
       const currentTime = performance.now();
       const dt = currentTime - lastTime || 16;
+      
       velocity = (currentY - lastY) / dt;
-      lastY = currentY; lastTime = currentTime;
-      const newRotation = startRotation - ((currentY - startY) * 0.45);
-      currentRotation = Math.max(-(products.length - 1) * itemAngle, Math.min(0, newRotation));
-      updateWheel(currentRotation);
-      const activeIdx = Math.round(-currentRotation / itemAngle);
-      if (activeIdx >= 0 && activeIdx < products.length) display.textContent = products[activeIdx].name;
-    }
-    function onPointerUp() { if (!isDragging) return; isDragging = false; let targetRot = currentRotation - (velocity * 38); setSelectedIndex(Math.max(0, Math.min(products.length - 1, Math.round(-targetRot / itemAngle))), true); }
+      lastY = currentY;
+      lastTime = currentTime;
 
-    items.forEach((item) => item.addEventListener('click', () => setSelectedIndex(parseInt(item.dataset.index, 10), true)));
-    picker.addEventListener('wheel', (e) => { e.preventDefault(); setSelectedIndex(currentIndex + (e.deltaY > 0 ? 1 : -1), true); }, { passive: false });
+      const deltaY = currentY - startY;
+      const newRotation = startRotation - (deltaY * 0.35);
+      const minRotation = -(products.length - 1) * itemAngle;
+      const maxRotation = 0;
+
+      if (newRotation > maxRotation) {
+        currentRotation = maxRotation + (newRotation - maxRotation) * 0.25;
+      } else if (newRotation < minRotation) {
+        currentRotation = minRotation + (newRotation - minRotation) * 0.25;
+      } else {
+        currentRotation = newRotation;
+      }
+
+      updateWheel(currentRotation);
+    }
+
+    function onPointerUp() {
+      if (!isDragging) return;
+      isDragging = false;
+
+      let targetRot = currentRotation - (velocity * 35);
+      let targetIndex = Math.round(-targetRot / itemAngle);
+      targetIndex = Math.max(0, Math.min(products.length - 1, targetIndex));
+      
+      setSelectedIndex(targetIndex, true);
+    }
+
+    // Click item selection
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        setSelectedIndex(parseInt(item.dataset.index, 10), true);
+      });
+    });
+
+    // Mouse wheel scroll
+    picker.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      setSelectedIndex(currentIndex + (e.deltaY > 0 ? 1 : -1), true);
+    }, { passive: false });
+
     picker.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('mouseup', onPointerUp);
+
     picker.addEventListener('touchstart', onPointerDown, { passive: true });
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
-    document.getElementById('confirmButton').addEventListener('click', () => { toast.textContent = `«${products[currentIndex].name}» انتخاب شد ✅`; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500); });
+
+    // Initial positioning
     setSelectedIndex(0, false);
   </script>
 </body>
