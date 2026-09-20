@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>انتخابگر چرخشی محصولات | Wheel Picker</title>
   
-  <!-- فونت زیبا و مدرن وزیرمتن -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
   <style>
+    /* ۱. تعریف فونت لوکال مربّع (TTF) */
+    @font-face {
+      font-family: 'Morabba';
+      src: url('MorabbaVF.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
@@ -23,12 +27,17 @@
       --item-height: 48px;
     }
 
-    * {
+    /* ریست استاندارد */
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ۲. اعمال فونت مربّع روی تمام المان‌ها */
+    body, button, input, select, textarea, div, span, h1, p {
+      font-family: 'Morabba', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     body {
@@ -74,14 +83,14 @@
     }
 
     .header h1 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 800;
       color: #0f172a;
       margin-bottom: 6px;
     }
 
     .header p {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--text-muted);
       font-weight: 400;
     }
@@ -106,7 +115,6 @@
       cursor: grabbing;
     }
 
-    /* Selection Indicator / Highlight Bar */
     .wheel-selection-indicator {
       position: absolute;
       top: calc(50% - (var(--item-height) / 2));
@@ -120,7 +128,6 @@
       z-index: 2;
     }
 
-    /* Top & Bottom Gradient Shadows */
     .wheel-overlay-top,
     .wheel-overlay-bottom {
       position: absolute;
@@ -160,7 +167,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 500;
       color: #64748b;
       backface-visibility: hidden;
@@ -170,11 +177,10 @@
 
     .wheel-item.selected {
       color: #4338ca;
-      font-weight: 700;
-      font-size: 1.25rem;
+      font-weight: 800;
+      font-size: 1.35rem;
     }
 
-    /* Selection Result Display */
     .result-card {
       width: 100%;
       background: #f1f5f9;
@@ -187,13 +193,13 @@
     }
 
     .result-label {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--text-muted);
       font-weight: 500;
     }
 
     .result-value {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: #1e1b4b;
       background: #e0e7ff;
@@ -209,7 +215,7 @@
       color: white;
       border: none;
       border-radius: 14px;
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.4);
@@ -225,7 +231,6 @@
       transform: translateY(1px);
     }
 
-    /* Modal / Alert Notification */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -257,32 +262,25 @@
       <p>برای انتخاب، گردونه را بالا یا پایین بچرخانید</p>
     </header>
 
-    <!-- ویجت چرخشی Wheel Picker -->
     <div class="wheel-picker-wrapper" id="wheelPicker" role="listbox" aria-label="فهرست محصولات">
       <div class="wheel-overlay-top"></div>
       <div class="wheel-selection-indicator"></div>
       <div class="wheel-overlay-bottom"></div>
       
-      <div class="wheel-scroller" id="wheelScroller">
-        <!-- آیتم‌ها به صورت پویا با جاوااسکریپت افزوده می‌شوند -->
-      </div>
+      <div class="wheel-scroller" id="wheelScroller"></div>
     </div>
 
-    <!-- باکس نمایش آیتم انتخاب شده -->
     <div class="result-card">
       <span class="result-label">محصول انتخاب‌شده:</span>
       <span class="result-value" id="selectedProductDisplay">محصول ۱</span>
     </div>
 
-    <!-- دکمه تایید انتخاب -->
     <button class="confirm-btn" id="confirmButton">تایید و ادامه</button>
   </main>
 
-  <!-- پیام اعلان Toast -->
   <div class="toast" id="toast"></div>
 
   <script>
-    // فهرست ۸ محصول فارسی
     const products = [
       { id: 1, name: "محصول ۱" },
       { id: 2, name: "محصول ۲" },
@@ -294,8 +292,8 @@
       { id: 8, name: "محصول ۸" }
     ];
 
-    const itemAngle = 26; // زاویه چرخش هر آیتم در نمای سه‌بعدی
-    const radius = 140; // شعاع استوانه سه‌بعدی چرخ
+    const itemAngle = 26;
+    const radius = 140;
     let currentIndex = 0;
     let currentRotation = 0;
 
@@ -304,7 +302,6 @@
     const toast = document.getElementById('toast');
     const picker = document.getElementById('wheelPicker');
 
-    // ایجاد المان‌های محصولات درون چرخ
     products.forEach((prod, index) => {
       const item = document.createElement('div');
       item.className = `wheel-item ${index === 0 ? 'selected' : ''}`;
@@ -320,12 +317,10 @@
         const itemRotation = (index * itemAngle) + rotationDeg;
         const rad = (itemRotation * Math.PI) / 180;
         
-        // محاسبه فاصله عمودی و عمق سه‌بعدی
         const translateY = -Math.sin(rad) * radius;
         const translateZ = Math.cos(rad) * radius - radius;
         const rotateX = itemRotation;
 
-        // تنظیم شفافیت و مقیاس بر اساس زاویه نسبت به مرکز
         const normalizedAngle = Math.abs((itemRotation % 360 + 360) % 360);
         const distance = normalizedAngle > 180 ? 360 - normalizedAngle : normalizedAngle;
         const opacity = Math.max(0.1, 1 - (distance / 70));
@@ -370,7 +365,6 @@
         currentRotation += diff * 0.2;
         updateWheel(currentRotation);
         
-        // به‌روزرسانی زنده اندیس انتخاب شده
         const activeIdx = Math.round(-currentRotation / itemAngle);
         if (activeIdx >= 0 && activeIdx < products.length) {
           display.textContent = products[activeIdx].name;
@@ -381,7 +375,6 @@
       step();
     }
 
-    // تعامل لمسی و ماوس (Drag & Momentum physics)
     let isDragging = false;
     let startY = 0;
     let startRotation = 0;
@@ -410,10 +403,8 @@
       lastY = currentY;
       lastTime = currentTime;
 
-      // تبدیل تغییر مکان به درجه چرخش
       const newRotation = startRotation - (deltaY * 0.45);
       
-      // محدودیت انتهای لیست با حالت کشسانی (Rubber band)
       const minRotation = -(products.length - 1) * itemAngle;
       const maxRotation = 0;
 
@@ -437,7 +428,6 @@
       if (!isDragging) return;
       isDragging = false;
 
-      // اضافه کردن اثر اینرسی و پرتاب (Inertia)
       let targetRot = currentRotation - (velocity * 40);
       let targetIndex = Math.round(-targetRot / itemAngle);
       targetIndex = Math.max(0, Math.min(products.length - 1, targetIndex));
@@ -445,7 +435,6 @@
       setSelectedIndex(targetIndex, true);
     }
 
-    // چرخش با کلیک روی آیتم‌ها
     items.forEach((item) => {
       item.addEventListener('click', () => {
         const idx = parseInt(item.dataset.index, 10);
@@ -453,7 +442,6 @@
       });
     });
 
-    // پشتیبانی از چرخ ماوس (Mouse Wheel)
     picker.addEventListener('wheel', (e) => {
       e.preventDefault();
       if (e.deltaY > 0) {
@@ -463,7 +451,6 @@
       }
     }, { passive: false });
 
-    // ثبت رخدادهای ماوس و تاچ
     picker.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
     window.addEventListener('mouseup', onPointerUp);
@@ -472,7 +459,6 @@
     window.addEventListener('touchmove', onPointerMove, { passive: true });
     window.addEventListener('touchend', onPointerUp);
 
-    // دکمه تایید و نمایش Toast
     function showToast(message) {
       toast.textContent = message;
       toast.classList.add('show');
@@ -485,7 +471,6 @@
       showToast(`«${products[currentIndex].name}» با موفقیت انتخاب شد ✨`);
     });
 
-    // راه‌اندازی اولیه
     setSelectedIndex(0, false);
   </script>
 </body>
